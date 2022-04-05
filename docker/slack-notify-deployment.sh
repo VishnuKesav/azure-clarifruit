@@ -1,0 +1,1 @@
+curl -X POST -H 'Content-type: application/json' --data '{"text":"Xavier dev -> master"}' ${QA_SLACK_WEBHOOK_URL}

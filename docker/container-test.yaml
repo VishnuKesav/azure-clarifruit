@@ -1,0 +1,23 @@
+schemaVersion: "2.0.0"
+
+fileExistenceTests:
+  - name: 'xavier.jar'
+    path: '/opt/xavier/xavier.jar'
+    shouldExist: true
+  - name: 'docker.conf'
+    path: '/opt/xavier/docker.conf'
+    shouldExist: true
+  - name: 'newrelic.jar'
+    path: '/opt/xavier/newrelic/newrelic.jar'
+    shouldExist: true
+
+metadataTest:
+  exposedPorts: ["8080"]
+  entrypoint: []
+  workdir: "/opt/xavier"
+
+commandTests:
+  - name: "Java Version"
+    command: "java"
+    args: ["-version"]
+    expectedError: ["17.0", "OpenJDK 64-Bit Server", "OpenJDK Runtime Environment"]

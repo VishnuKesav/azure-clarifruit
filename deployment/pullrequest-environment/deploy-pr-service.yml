@@ -1,0 +1,128 @@
+Description: A CloudFormation template for which creates an ECS service for Xavier dev PRs.
+Parameters:
+  VPC:
+    Type: AWS::EC2::VPC::Id
+  Subnet1:
+    Type: AWS::EC2::Subnet::Id
+  Subnet2:
+    Type: AWS::EC2::Subnet::Id
+  AlbListenerARN:
+    Type: String
+  AlbListenerPriority:
+    Type: Number
+  ContainerSecurityGroup:
+    Type: String
+  TaskDefinition:
+    Type: String
+    Description: The Task Definitoon ARN e.g. arn:aws:ecs:eu-central-1:305761728900:task-definition/xavier:426
+  PullRequestName:
+    Type: String
+    Description: The name of the pull request - also used for the DNS e.g. services-dev-pr-{PullRequestName}.clarifruit.com
+    AllowedPattern: "[a-z0-9-_]{1,27}"
+  ContainerPort:
+    Type: Number
+    Default: 8080
+  ContainerName:
+    Type: String
+    Default: xavier
+  HealthCheckPath:
+    Type: String
+    Default: "/health"
+  HostedZoneName:
+    Type: String
+    Default: clarifruit.com
+  SubdomainPrefix:
+    Type: String
+  DesiredContainers:
+    Type: Number
+    Default: 1
+  ClusterName:
+    Type: String
+    Description: The name of the cluster.
+  AlbDnsHostedZoneName:
+    Type: String
+    Description: The DNS Hosted Zone name of the ALB. Ref https://docs.aws.amazon.com/general/latest/gr/elb.html
+  AlbDnsName:
+    Type: String
+    Description: The DNS name of the ALB.
+  ServiceNamePrefix:
+    Type: String
+  TargetGroupPrefix:
+    Type: String
+    Default: x-pr
+
+Resources:
+  Service:
+    Type: AWS::ECS::Service
+    DependsOn: [ListenerRule]
+    Properties:
+      Cluster: !Ref ClusterName
+      ServiceName: !Sub "${ServiceNamePrefix}-${PullRequestName}"
+      TaskDefinition: !Ref TaskDefinition
+      DeploymentConfiguration:
+        MinimumHealthyPercent: 100
+        MaximumPercent: 200
+        DeploymentCircuitBreaker:
+          Enable: true
+          Rollback: true
+      DesiredCount: !Ref DesiredContainers
+      HealthCheckGracePeriodSeconds: 45
+      LaunchType: FARGATE
+      NetworkConfiguration:
+        AwsvpcConfiguration:
+          AssignPublicIp: DISABLED
+          Subnets:
+            - !Ref Subnet1
+            - !Ref Subnet2
+          SecurityGroups:
+            - !Ref ContainerSecurityGroup
+      LoadBalancers:
+        - ContainerName: !Ref ContainerName
+          ContainerPort: !Ref ContainerPort
+          TargetGroupArn: !Ref TargetGroup
+
+  TargetGroup:
+    Type: AWS::ElasticLoadBalancingV2::TargetGroup
+    Properties:
+      HealthCheckIntervalSeconds: 10
+      HealthCheckPath: !Ref HealthCheckPath
+      HealthCheckTimeoutSeconds: 5
+      UnhealthyThresholdCount: 2
+      HealthyThresholdCount: 2
+      Name: !Sub "${TargetGroupPrefix}-${PullRequestName}"
+      Port: !Ref ContainerPort
+      Protocol: HTTP
+      TargetGroupAttributes:
+        - Key: deregistration_delay.timeout_seconds
+          Value: 5 # default is 300
+      TargetType: ip
+      VpcId: !Ref VPC
+
+  ListenerRule:
+    Type: AWS::ElasticLoadBalancingV2::ListenerRule
+    Properties:
+      Actions:
+        - TargetGroupArn: !Ref TargetGroup
+          Type: forward
+      Conditions:
+        - Field: host-header
+          HostHeaderConfig:
+            Values:
+              - !Sub "${SubdomainPrefix}-${PullRequestName}.${HostedZoneName}"
+      ListenerArn: !Ref AlbListenerARN
+      Priority: !Ref AlbListenerPriority
+
+  DNSRecord:
+    Type: AWS::Route53::RecordSet
+    Properties:
+      HostedZoneName: !Sub "${HostedZoneName}."
+      Name: !Sub "${SubdomainPrefix}-${PullRequestName}.${HostedZoneName}."
+      Type: A
+      AliasTarget:
+        DNSName: !Ref AlbDnsName
+        HostedZoneId: !Ref AlbDnsHostedZoneName
+
+Outputs:
+  Endpoint:
+    Description: Endpoint
+    Value: !Sub "https://${SubdomainPrefix}-${PullRequestName}.${HostedZoneName}/info/version"

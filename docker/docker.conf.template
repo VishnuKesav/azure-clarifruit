@@ -1,0 +1,34 @@
+environment=${XAVIER_ENVIRONMENT}
+
+db.url=${XAVIER_DB_URL}
+db.username=${XAVIER_DB_USERNAME}
+db.password=${XAVIER_DB_PASSWORD}
+db.maximumPoolSize=${XAVIER_DB_MAXIMUM_POOL_SIZE}""
+
+db.mongo.connectionString.configs=${XAVIER_MONGO_CONNECTION_CONFIGS}""
+db.mongo.connectionString.stats=${XAVIER_MONGO_CONNECTION_STATS}""
+db.mongo.connectionString.inspections=${XAVIER_MONGO_CONNECTION_INSPECTIONS}""
+db.mongo.connectionString.auditrail=${XAVIER_MONGO_CONNECTION_AUDITRAIL}""
+
+aws.key=${XAVIER_AWS_ACCESS_KEY}""
+aws.secret=${XAVIER_AWS_ACCESS_SECRET}""
+aws.region=${XAVIER_AWS_REGION}""
+aws.ses.region=${XAVIER_AWS_SES_REGION}""
+
+aws.app.key=${XAVIER_AWS_APP_ACCESS_KEY}""
+aws.app.secret=${XAVIER_AWS_APP_ACCESS_SECRET}""
+
+auth.client_secret=${XAVIER_AUTH_CLIENT_SECRET}""
+auth.admin.client_secret=${XAVIER_AUTH_ADMIN_CLIENT_SECRET}""
+
+internal.token=${XAVIER_INTERNAL_TOKEN}
+
+logging.papertrail.enabled=${XAVIER_LOGGING_PAPERTRAIL_ENABLED}
+logging.papertrail.destination=${XAVIER_LOGGING_PAPERTRAIL_DESTINATION}
+logging.papertrail.threshold=${XAVIER_LOGGING_PAPERTRAIL_THRESHOLD}
+
+scio.key=${XAVIER_SCIO_KEY}""
+scio.secret=${XAVIER_SCIO_SECRET}""
+
+#--- BUILD PROPERTIES ---#
+#e.g. version="0.1"

@@ -1,0 +1,156 @@
+{
+  "family": "REPLACE_ME_TASK_FAMILY",
+  "taskRoleArn": "arn:aws:iam::305761728900:role/xavier-dev-ecs-task-role",
+  "executionRoleArn": "arn:aws:iam::305761728900:role/ecsTaskExecutionRole",
+  "networkMode": "awsvpc",
+  "volumes": [],
+  "placementConstraints": [],
+  "requiresCompatibilities": [
+    "FARGATE"
+  ],
+  "cpu": "2048",
+  "memory": "4096",
+  "containerDefinitions": [
+    {
+      "name": "xavier",
+      "image": "REPLACE_ME_IMAGE",
+      "healthCheck": {
+        "retries": 3,
+        "command": [
+          "CMD-SHELL",
+          "wget -nv -t1 --spider http://localhost:8080/health/ || exit 1"
+        ],
+        "timeout": 10,
+        "interval": 30,
+        "startPeriod": 15
+      },
+      "cpu": 0,
+      "portMappings": [
+        {
+          "containerPort": 8080,
+          "hostPort": 8080,
+          "protocol": "tcp"
+        }
+      ],
+      "essential": true,
+      "environment": [
+        {
+          "name": "NEW_RELIC_ENABLED",
+          "value": "true"
+        },
+        {
+          "name": "XAVIER_DB_MAXIMUM_POOL_SIZE",
+          "value": "5"
+        },
+        {
+          "name": "XAVIER_LOGGING_PAPERTRAIL_ENABLED",
+          "value": "true"
+        },
+        {
+          "name": "XAVIER_LOGGING_PAPERTRAIL_DESTINATION",
+          "value": "REPLACE_ME_PAPERTRAIL_DESTINATION"
+        },
+        {
+          "name": "XAVIER_LOGGING_PAPERTRAIL_THRESHOLD",
+          "value": "INFO"
+        },
+        {
+          "name": "XAVIER_ENVIRONMENT",
+          "value": "REPLACE_ME_XAVIER_ENVIRONMENT"
+        }
+      ],
+      "mountPoints": [],
+      "volumesFrom": [],
+      "secrets": [
+        {
+          "name": "NEW_RELIC_APP_NAME",
+          "valueFrom": "arn:aws:ssm:REPLACE_ME_AWS_REGION:305761728900:parameter/xavier/newrelic/app/name"
+        },
+        {
+          "name": "NEW_RELIC_LICENSE_KEY",
+          "valueFrom": "arn:aws:ssm:REPLACE_ME_AWS_REGION:305761728900:parameter/xavier/newrelic/license/key"
+        },
+        {
+          "name": "XAVIER_AUTH_ADMIN_CLIENT_SECRET",
+          "valueFrom": "arn:aws:ssm:REPLACE_ME_AWS_REGION:305761728900:parameter/xavier/auth/admin/client/secret"
+        },
+        {
+          "name": "XAVIER_AUTH_CLIENT_SECRET",
+          "valueFrom": "arn:aws:ssm:REPLACE_ME_AWS_REGION:305761728900:parameter/xavier/auth/client/secret"
+        },
+        {
+          "name": "XAVIER_AWS_ACCESS_KEY",
+          "valueFrom": "arn:aws:ssm:REPLACE_ME_AWS_REGION:305761728900:parameter/xavier/aws/key"
+        },
+        {
+          "name": "XAVIER_AWS_ACCESS_SECRET",
+          "valueFrom": "arn:aws:ssm:REPLACE_ME_AWS_REGION:305761728900:parameter/xavier/aws/secret"
+        },
+        {
+          "name": "XAVIER_AWS_REGION",
+          "valueFrom": "arn:aws:ssm:REPLACE_ME_AWS_REGION:305761728900:parameter/xavier/aws/region"
+        },
+        {
+          "name": "XAVIER_AWS_SES_REGION",
+          "valueFrom": "arn:aws:ssm:REPLACE_ME_AWS_REGION:305761728900:parameter/xavier/aws/ses/region"
+        },
+        {
+          "name": "XAVIER_AWS_APP_ACCESS_KEY",
+          "valueFrom": "arn:aws:ssm:REPLACE_ME_AWS_REGION:305761728900:parameter/xavier/aws/app/key"
+        },
+        {
+          "name": "XAVIER_AWS_APP_ACCESS_SECRET",
+          "valueFrom": "arn:aws:ssm:REPLACE_ME_AWS_REGION:305761728900:parameter/xavier/aws/app/secret"
+        },
+        {
+          "name": "XAVIER_DB_PASSWORD",
+          "valueFrom": "arn:aws:ssm:REPLACE_ME_AWS_REGION:305761728900:parameter/xavier/db/password"
+        },
+        {
+          "name": "XAVIER_DB_URL",
+          "valueFrom": "arn:aws:ssm:REPLACE_ME_AWS_REGION:305761728900:parameter/xavier/db/url"
+        },
+        {
+          "name": "XAVIER_DB_USERNAME",
+          "valueFrom": "arn:aws:ssm:REPLACE_ME_AWS_REGION:305761728900:parameter/xavier/db/username"
+        },
+        {
+          "name": "XAVIER_INTERNAL_TOKEN",
+          "valueFrom": "arn:aws:ssm:REPLACE_ME_AWS_REGION:305761728900:parameter/xavier/internal/token"
+        },
+        {
+          "name": "XAVIER_SCIO_KEY",
+          "valueFrom": "arn:aws:ssm:REPLACE_ME_AWS_REGION:305761728900:parameter/xavier/scio/key"
+        },
+        {
+          "name": "XAVIER_SCIO_SECRET",
+          "valueFrom": "arn:aws:ssm:REPLACE_ME_AWS_REGION:305761728900:parameter/xavier/scio/secret"
+        },
+        {
+          "name": "XAVIER_MONGO_CONNECTION_CONFIGS",
+          "valueFrom": "arn:aws:ssm:REPLACE_ME_AWS_REGION:305761728900:parameter/xavier/mongo/connection/configs"
+        },
+        {
+          "name": "XAVIER_MONGO_CONNECTION_STATS",
+          "valueFrom": "arn:aws:ssm:REPLACE_ME_AWS_REGION:305761728900:parameter/xavier/mongo/connection/stats"
+        },
+        {
+          "name": "XAVIER_MONGO_CONNECTION_INSPECTIONS",
+          "valueFrom": "arn:aws:ssm:REPLACE_ME_AWS_REGION:305761728900:parameter/xavier/mongo/connection/inspections"
+        },
+        {
+          "name": "XAVIER_MONGO_CONNECTION_AUDITRAIL",
+          "valueFrom": "arn:aws:ssm:REPLACE_ME_AWS_REGION:305761728900:parameter/xavier/mongo/connection/auditrail"
+        }
+      ],
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "/ecs/REPLACE_ME_LOGS_GROUP",
+          "awslogs-region": "REPLACE_ME_AWS_REGION",
+          "awslogs-stream-prefix": "ecs"
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,10 @@
+{
+  "applicationName": "REPLACE_ME_CODE_DEPLOY_APP_NAME",
+  "deploymentGroupName": "REPLACE_ME_CODE_DEPLOY_GROUP_NAME",
+  "revision": {
+    "revisionType": "AppSpecContent",
+    "appSpecContent": {
+      "content": "{\"version\":1,\"Resources\":[{\"TargetService\":{\"Type\":\"AWS::ECS::Service\",\"Properties\":{\"TaskDefinition\":\"REPLACE_ME_DEFINITION\",\"LoadBalancerInfo\":{\"ContainerName\":\"xavier\",\"ContainerPort\":8080}}}}]}"
+    }
+  }
+}
